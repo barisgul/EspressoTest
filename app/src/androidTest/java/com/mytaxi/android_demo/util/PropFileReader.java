@@ -1,14 +1,20 @@
 package com.mytaxi.android_demo.util;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class PropFileReader {
     private Properties properties;
-    private final String propertyFilePath= "src/androidTest/java/com.mytaxi.android_demo/environments/configuration.properties";
+
+    private final String propertyFilePath=
+            "src\\androidTest\\assets\\files\\configuration.properties";
 
 
     public PropFileReader(){
@@ -34,16 +40,12 @@ public class PropFileReader {
         else throw new RuntimeException("Login password is not specified in the Configuration.properties file for the Key:password");
     }
 
-    public String getUserName() {
-        String userName = properties.getProperty("userName");
-        if(userName != null) return userName;
-        else throw new RuntimeException("Login password is not specified in the Configuration.properties file for the Key:password");
-    }
-
-    public String getPassword() {
-        String password = properties.getProperty("password");
-        if(password != null) return password;
-        else throw new RuntimeException("Login password is not specified in the Configuration.properties file for the Key:password");
+    public static String getProperty(String key, Context context) throws IOException {
+        Properties properties = new Properties();;
+        AssetManager assetManager = context.getAssets();
+        InputStream inputStream = assetManager.open("configuration.properties");
+        properties.load(inputStream);
+        return properties.getProperty(key);
     }
 
 

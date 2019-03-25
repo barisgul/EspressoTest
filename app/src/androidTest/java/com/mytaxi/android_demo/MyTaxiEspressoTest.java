@@ -9,15 +9,23 @@ import android.support.test.espresso.matcher.RootMatchers;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.mytaxi.android_demo.activities.MainActivity;
 import com.mytaxi.android_demo.util.PropFileReader;
-import com.mytaxi.android_demo.util.UserCredentials;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -27,16 +35,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static com.mytaxi.android_demo.activities.RecordTest.childAtPosition;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 @RunWith(AndroidJUnit4.class)
 public class MyTaxiEspressoTest extends  BaseTest {
 
@@ -45,32 +47,28 @@ public ActivityTestRule<MainActivity> mainActivityActivityTestRule =
         new ActivityTestRule<>(MainActivity.class,false,false);
 
     @Test
-    public void useAppContext() throws Exception {
+    public void myTaxiTest() throws Exception {
+        //launch activity
         mainActivityActivityTestRule.launchActivity(new Intent());
 
         assertEquals("com.mytaxi.android_demo", appContext.getPackageName());
 
+        //assert credential areas
         onView(withId(R.id.edt_username)).check(matches(isDisplayed()));
 
-        /*PropFileReader fileReader = new PropFileReader();
-        UserCredentials credentials = new UserCredentials(fileReader.getUserName(),fileReader.getPassword());
-        String uName =credentials.userName;
-        String pw = credentials.password;*/
         onView(withId(R.id.edt_username)).perform(typeText("crazydog335"), click());
-        SystemClock.sleep(1500);
+
         onView(withId(R.id.edt_password)).perform(typeText("venture"), click());
-        SystemClock.sleep(3500);
-        //btn submit
+
+        //click on submit
         onView(withId(R.id.btn_login)).perform(click());
 
-        //wit until authenticated activity appear
-        SystemClock.sleep(500);
-
-        //searchContainer
+        //type "He" on seachbox
         onView(withId(R.id.textSearch)).perform(typeText("He"));
 
         SystemClock.sleep(500);
 
+        //click on text match with "Hector Gautier"
         onView(ViewMatchers.withText("Hector Gautier"))
                 .inRoot(RootMatchers.isPlatformPopup())
                 .perform(ViewActions.click());
@@ -105,4 +103,5 @@ public ActivityTestRule<MainActivity> mainActivityActivityTestRule =
                         isDisplayed()));
         navigationMenuItemView.perform(click());
     }
+
 }
