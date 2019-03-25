@@ -1,6 +1,5 @@
 package com.mytaxi.android_demo;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -8,8 +7,6 @@ import android.support.test.InstrumentationRegistry;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-
-import com.mytaxi.android_demo.util.PropFileReader;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
