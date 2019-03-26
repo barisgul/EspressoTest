@@ -145,7 +145,6 @@ public class HttpClient {
         void setUser(User user) {
             mUser = user;
         }
-
     }
 
 }

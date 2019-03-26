@@ -1,35 +1,43 @@
 package com.mytaxi.android_demo;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
+import com.mytaxi.android_demo.activities.MainActivity;
+import com.mytaxi.android_demo.utils.storage.SharedPrefStorage;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
-
-import javax.inject.Inject;
+import org.junit.Rule;
 
 public class BaseTest {
     public Context appContext;
-    private SharedPreferences.Editor editor;
 
-    @Inject
-    protected SharedPreferences pref;
+    @Rule
+    public ActivityTestRule<MainActivity> mainActivityActivityTestRule =
+            new ActivityTestRule<>(MainActivity.class,false,false);
 
     @Before
     public void setUp() throws Exception {
-        //Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        //get appContext
         appContext = InstrumentationRegistry.getTargetContext();
-        editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit();
-        editor.clear();
-        editor.apply();
+
+        //Create SharedPrefStorage instance from storage
+        SharedPrefStorage sharedPrefStorage = new SharedPrefStorage(appContext);
+
+        //wipe data
+        sharedPrefStorage.resetUser();
+        //launch main activity
+        mainActivityActivityTestRule.launchActivity(new Intent());
     }
+
 
     public static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -49,6 +57,4 @@ public class BaseTest {
             }
         };
     }
-
-
 }

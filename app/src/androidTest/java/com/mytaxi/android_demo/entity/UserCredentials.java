@@ -1,24 +1,12 @@
-package com.mytaxi.android_demo.util;
+package com.mytaxi.android_demo.entity;
 
 public class UserCredentials {
 
     public String userName;
-
-    public String getUserName()
-    {
-        return userName;
-    }
-
     public String password;
-
-    public String getPassword()
-    {
-        return password;
-    }
 
     public UserCredentials(String userName, String password){
         this.userName=userName;
         this.password=password;
     }
-
 }

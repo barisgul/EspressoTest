@@ -1,25 +1,17 @@
 package com.mytaxi.android_demo;
 
-import android.content.Intent;
 import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.RootMatchers;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
-import com.mytaxi.android_demo.activities.MainActivity;
+import com.mytaxi.android_demo.util.FileReaderUtil;
+import com.mytaxi.android_demo.entity.UserCredentials;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,40 +27,30 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
 @RunWith(AndroidJUnit4.class)
 public class MyTaxiEspressoTest extends BaseTest {
 
-    @Rule
-    public ActivityTestRule<MainActivity> mainActivityActivityTestRule =
-            new ActivityTestRule<>(MainActivity.class,false,false);
-
     @Test
-    public void useAppContext() throws Exception {
-        mainActivityActivityTestRule.launchActivity(new Intent());
+    public void myTaxiLoginAndViewDriverProfileTest() throws Exception {
+
+        String userName = FileReaderUtil.getProperty("userName",appContext);
+        String password = FileReaderUtil.getProperty("password",appContext);
+
+        UserCredentials  credentials = new UserCredentials(userName,password);
 
         assertEquals("com.mytaxi.android_demo", appContext.getPackageName());
 
+        //assert username edt text
         onView(withId(R.id.edt_username)).check(matches(isDisplayed()));
 
-        onView(withId(R.id.edt_username)).perform(typeText("crazydog335"), click());
+        onView(withId(R.id.edt_username)).perform(typeText(credentials.userName), click());
         SystemClock.sleep(1500);
-        onView(withId(R.id.edt_password)).perform(typeText("venture"), click());
-        SystemClock.sleep(3500);
-        //btn submit
+        onView(withId(R.id.edt_password)).perform(typeText(credentials.password), click());
+
+        //logon
         onView(withId(R.id.btn_login)).perform(click());
-
-        //wit until authenticated activity appear
-        SystemClock.sleep(500);
-
         //searchContainer
         onView(withId(R.id.textSearch)).perform(typeText("He"));
-
-        SystemClock.sleep(500);
 
         onView(ViewMatchers.withText("Hector Gautier"))
                 .inRoot(RootMatchers.isPlatformPopup())
@@ -76,12 +58,11 @@ public class MyTaxiEspressoTest extends BaseTest {
 
         //assert driver name as "Hector Gautier"
         onView(withId(R.id.textViewDriverName)).check(matches(isDisplayed()));
-    }
 
-    @After
-    public void tearDown() throws Exception {
+        //click on back
         Espresso.pressBack();
 
+        //find and click on menu item
         onView(withId(R.id.toolbar)).perform(click());
         ViewInteraction appCompatImageButton = onView(
                 allOf(withContentDescription("Open navigation drawer"),
@@ -94,6 +75,7 @@ public class MyTaxiEspressoTest extends BaseTest {
                         isDisplayed()));
         appCompatImageButton.perform(click());
 
+        //find and click on logout button
         ViewInteraction navigationMenuItemView = onView(
                 allOf(childAtPosition(
                         allOf(withId(R.id.design_navigation_view),
@@ -103,5 +85,10 @@ public class MyTaxiEspressoTest extends BaseTest {
                         1),
                         isDisplayed()));
         navigationMenuItemView.perform(click());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
     }
 }
